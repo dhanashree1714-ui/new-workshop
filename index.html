@@ -2,102 +2,440 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Weather App</title>
+  <title>The WeatherMate App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      color: #fff;
-      text-align: center;
-      padding: 50px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .app {
-      max-width: 400px;
-      margin: auto;
-      background: rgba(0,0,0,0.2);
-      padding: 20px;
-      border-radius: 15px;
+    /* Cloud decorations */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 100px;
+      opacity: 0.7;
     }
 
-    input {
-      padding: 10px;
-      width: 70%;
-      border: none;
-      border-radius: 8px;
-      outline: none;
+    .cloud1 { width: 150px; height: 60px; top: 10%; left: 5%; animation: float 6s infinite; }
+    .cloud2 { width: 200px; height: 80px; top: 70%; right: 8%; animation: float 8s infinite; }
+    .cloud3 { width: 120px; height: 50px; top: 30%; right: 10%; animation: float 7s infinite; }
+    .cloud4 { width: 180px; height: 70px; bottom: 15%; left: 15%; animation: float 9s infinite; }
+
+    @keyframes float {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(20px); }
     }
 
-    button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #fff;
+    .container {
+      display: flex;
+      width: 90%;
+      max-width: 1200px;
+      gap: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 100%);
+      padding: 40px 30px;
+      min-width: 220px;
       color: #333;
-      cursor: pointer;
-      margin-left: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .weather {
+    .sidebar h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #555;
+    }
+
+    .current-location {
+      flex: 1;
+    }
+
+    .location-name {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .location-weather {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .weather-icon {
+      font-size: 48px;
       margin-top: 20px;
     }
 
-    .temp {
-      font-size: 40px;
+    .main-content {
+      flex: 1;
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-title {
+      font-size: 42px;
       font-weight: bold;
+      color: #333;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .search-section {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+
+    input[type="text"] {
+      padding: 12px 20px;
+      width: 280px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #87CEEB;
+    }
+
+    button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .unit-toggle {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .favorites-section {
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .favorites-box {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+
+    .favorites-box p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .about-btn {
+      padding: 10px 25px;
+      background: #E8F4F8;
+      color: #333;
+      border: 2px solid #87CEEB;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .about-btn:hover {
+      background: #87CEEB;
+      color: #fff;
+    }
+
+    .weather-result {
+      display: none;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.5s;
+    }
+
+    .weather-result.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .result-header {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .result-temp {
+      font-size: 56px;
+      font-weight: bold;
+      color: #87CEEB;
+      margin-bottom: 10px;
+    }
+
+    .result-description {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .result-details {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-size: 14px;
+      color: #666;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        width: 95%;
+      }
+
+      .sidebar {
+        min-width: 100%;
+        padding: 30px;
+      }
+
+      .main-content {
+        padding: 30px 20px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+
+      .app-title {
+        font-size: 28px;
+      }
+
+      .cloud1 { width: 100px; height: 40px; }
+      .cloud2 { width: 130px; height: 50px; }
+      .cloud3 { width: 90px; height: 35px; }
+      .cloud4 { width: 110px; height: 45px; }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="app">
-    <h2>🌦 Weather App</h2>
+  <!-- Cloud decorations -->
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+  <div class="cloud cloud4"></div>
 
-    <input type="text" id="city" placeholder="Enter city name">
-    <button onclick="getWeather()">Search</button>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div>
+        <h3>Weather in Your Location</h3>
+        <div class="current-location">
+          <div class="location-name" id="sidebarCity">Chapel Hill</div>
+          <div class="location-weather">
+            <div id="sidebarTemp">9°C</div>
+            <div id="sidebarDescription">Light rain</div>
+          </div>
+          <div class="weather-icon" id="sidebarIcon">🌧️</div>
+        </div>
+      </div>
+      <div>
+        <a href="#" style="text-decoration: none;">
+          <button class="about-btn">Back to Home</button>
+        </a>
+      </div>
+    </div>
 
-    <div class="weather" id="weatherResult"></div>
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="app-title">The WeatherMate App</div>
+
+      <div class="search-section">
+        <div class="search-box">
+          <input type="text" id="city" placeholder="Search for any location...">
+          <button onclick="getWeather()">Search</button>
+        </div>
+        <div class="unit-toggle">Displaying in °C</div>
+      </div>
+
+      <div class="weather-result" id="weatherResult"></div>
+
+      <div class="favorites-section">
+        <div class="favorites-box">
+          <p id="favoritesText">No favorite cities added.</p>
+        </div>
+        <button class="about-btn" onclick="showAbout()">About Us</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const apiKey = "YOUR_API_KEY_HERE"; // 🔑 Put your API key here
+    // Mock weather data for different cities
+    const mockData = {
+      'chapel hill': {
+        name: 'Chapel Hill',
+        country: 'US',
+        temp: 9,
+        description: 'Light rain',
+        humidity: 75,
+        windSpeed: 4.2,
+        icon: '🌧️'
+      },
+      'new york': {
+        name: 'New York',
+        country: 'US',
+        temp: 12,
+        description: 'Cloudy',
+        humidity: 65,
+        windSpeed: 5.1,
+        icon: '☁️'
+      },
+      'london': {
+        name: 'London',
+        country: 'UK',
+        temp: 8,
+        description: 'Rainy',
+        humidity: 80,
+        windSpeed: 6.3,
+        icon: '🌧️'
+      },
+      'paris': {
+        name: 'Paris',
+        country: 'FR',
+        temp: 11,
+        description: 'Partly cloudy',
+        humidity: 70,
+        windSpeed: 4.8,
+        icon: '⛅'
+      },
+      'tokyo': {
+        name: 'Tokyo',
+        country: 'JP',
+        temp: 18,
+        description: 'Sunny',
+        humidity: 55,
+        windSpeed: 3.5,
+        icon: '☀️'
+      },
+      'sydney': {
+        name: 'Sydney',
+        country: 'AU',
+        temp: 22,
+        description: 'Clear',
+        humidity: 60,
+        windSpeed: 4.0,
+        icon: '☀️'
+      }
+    };
 
-    async function getWeather() {
-      const city = document.getElementById("city").value;
+    // Load default weather on page load
+    window.addEventListener('load', function() {
+      displayWeather(mockData['chapel hill']);
+    });
+
+    function getWeather() {
+      const city = document.getElementById("city").value.trim().toLowerCase();
 
       if (!city) {
         alert("Please enter a city name");
         return;
       }
 
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.cod !== 200) {
-          document.getElementById("weatherResult").innerHTML = "City not found";
-          return;
-        }
-
-        const weatherHTML = `
-          <h3>${data.name}, ${data.sys.country}</h3>
-          <div class="temp">${data.main.temp}°C</div>
-          <p>${data.weather[0].main}</p>
-          <p>Humidity: ${data.main.humidity}%</p>
-          <p>Wind Speed: ${data.wind.speed} m/s</p>
-        `;
-
-        document.getElementById("weatherResult").innerHTML = weatherHTML;
-
-      } catch (error) {
-        document.getElementById("weatherResult").innerHTML = "Error fetching data";
+      // Check if city exists in mock data
+      if (mockData[city]) {
+        displayWeather(mockData[city]);
+        document.getElementById("city").value = '';
+      } else {
+        // Use mock data as fallback
+        alert("City not found in our database. Showing Chapel Hill instead.");
+        displayWeather(mockData['chapel hill']);
+        document.getElementById("city").value = '';
       }
     }
+
+    function displayWeather(data) {
+      const weatherHTML = `
+        <div class="result-header">${data.name}, ${data.country}</div>
+        <div class="result-temp">${data.temp}°C</div>
+        <div class="result-description">${data.description}</div>
+        <div class="result-details">
+          <div>💧 Humidity: ${data.humidity}%</div>
+          <div>💨 Wind: ${data.windSpeed} m/s</div>
+        </div>
+      `;
+
+      document.getElementById("weatherResult").innerHTML = weatherHTML;
+      document.getElementById("weatherResult").classList.add("show");
+
+      // Update sidebar
+      document.getElementById("sidebarCity").textContent = data.name;
+      document.getElementById("sidebarTemp").textContent = data.temp + "°C";
+      document.getElementById("sidebarDescription").textContent = data.description;
+      document.getElementById("sidebarIcon").textContent = data.icon;
+    }
+
+    function showAbout() {
+      alert("🌦️ The WeatherMate App\n\nYour personal weather companion that helps you stay informed about weather conditions in any location.\n\nVersion 1.0\nMade with ❤️");
+    }
+
+    // Allow Enter key to search
+    document.getElementById("city").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        getWeather();
+      }
+    });
   </script>
 
 </body>
